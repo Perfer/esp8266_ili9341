@@ -40,4 +40,7 @@ typedef union
 #define TFT_RST_DEACTIVE 	GPIO_OUTPUT_SET(0, 1)
 #define TFT_RST_INIT		PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO0_U, FUNC_GPIO0); TFT_RST_DEACTIVE
 
+extern void tft_fillScreen(void);
+extern void tft_init(void);
+
 #endif /* INCLUDE_ILI9341_H_ */
