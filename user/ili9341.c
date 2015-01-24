@@ -39,7 +39,7 @@ static void transmitData2(uint16_t data)
 
 static uint8_t readRegister(uint8_t cmd, uint8_t numParameter)
 {
-    uint8_t data;
+    uint8_t data = 0;
     transmitCmd(0xD9); // secret command
     transmitData1(0x10 + numParameter);// 0x11 is the first Parameter
 
@@ -57,6 +57,12 @@ uint32_t tft_readId(void)
     uint8_t i = 0;
 	uint32_t_bytes id = {0};
 
+	TFT_RST_ACTIVE;
+	os_delay_us(10000);
+	TFT_RST_DEACTIVE;
+
+	os_delay_us(1000);
+
     id.bytes.b2 = readRegister(0xd3, 1);
     id.bytes.b1 = readRegister(0xd3, 2);
     id.bytes.b0 = readRegister(0xd3, 3);
@@ -69,5 +75,6 @@ void tft_init(void)
 	hspi_init();
 	TFT_CS_INIT;
 	TFT_DC_INIT;
+	TFT_RST_INIT;
 }
 

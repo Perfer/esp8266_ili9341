@@ -20,7 +20,7 @@ void hspi_init(void)
 	// time length HIGHT level = (CPU clock / 10 / 2) ^ -1,
 	// time length LOW level = (CPU clock / 10 / 2) ^ -1
 	WRITE_PERI_REG(SPI_FLASH_CLOCK(HSPI),
-	   ((39 & SPI_CLKDIV_PRE) << SPI_CLKDIV_PRE_S) |
+	   ((29 & SPI_CLKDIV_PRE) << SPI_CLKDIV_PRE_S) |
 	   ((3 & SPI_CLKCNT_N) << SPI_CLKCNT_N_S) |
 	   ((1 & SPI_CLKCNT_H) << SPI_CLKCNT_H_S) |
 	   ((3 & SPI_CLKCNT_L) << SPI_CLKCNT_L_S));
@@ -39,7 +39,7 @@ static void writeDataToBuffer(uint8_t * data, uint8_t numberByte)
 			buffer += 1;
 		}
 		*buffer &= ~( 0xFFUL << shift );
-		*buffer |= ((uint32_t)data) << shift;
+		*buffer |= ((uint32_t)data[i]) << shift;
 		shift += 8;
 	}
 }
