@@ -22,11 +22,11 @@ static void transmitCmdData(uint8_t cmd, uint8_t * data, uint8_t numDataByte)
     TFT_CS_DEACTIVE;
 }
 
-static void transmitData(uint8_t *data, uint8_t numByte)
+static void transmitData(uint8_t *data, uint8_t numByte, uint32_t numRepeat)
 {
 	TFT_DC_DATA;
     TFT_CS_ACTIVE;
-    hspi_TxRx(data, numByte);
+    hspi_Tx(data, numByte, numRepeat);
     TFT_CS_DEACTIVE;
 }
 
@@ -207,8 +207,9 @@ void tft_init(void)
 
 void tft_fillRectangle(uint16_t xLeft, uint16_t xRight, uint16_t yUp, uint16_t yDown, uint16_t color)
 {
-    uint32_t amountTransmit = 0;
+    uint32_t numRepeat = 0;
     uint32_t i = 0;
+    uint8_t data[2] = {0};
 
     if (xLeft > xRight) swap(&xLeft, &xRight);
     if (yUp > yDown) swap(&yUp, &yDown);
@@ -218,16 +219,15 @@ void tft_fillRectangle(uint16_t xLeft, uint16_t xRight, uint16_t yUp, uint16_t y
     constrain(&yUp, MIN_Y, MAX_Y);
     constrain(&yDown, MIN_Y, MAX_Y);
 
-    amountTransmit = (xRight - xLeft + 1) * (yDown - yUp + 1);
+    numRepeat = (xRight - xLeft + 1) * (yDown - yUp + 1);
 
     setCol(xLeft, xRight);
     setPage(yUp, yDown);
-    transmitCmdData(0x2C, 0, 0);//  start to write to display ram
+    transmitCmdData(0x2C, 0, 0);//  start to write to display RAM
 
-    for(i = 0; i < amountTransmit; i++)
-    {
-    	uint8_t data[2] = {color >> 8, color & 0xff};
-    	transmitData((uint8_t *)data, 2);
-    }
+    data[0] = color >> 8;
+    data[1] = color & 0xff;
+
+   	transmitData(data, 2, numRepeat);
 }
 

@@ -87,5 +87,64 @@ void hspi_TxRx(uint8_t * data, uint8_t numberByte)
 	while (READ_PERI_REG(SPI_FLASH_CMD(HSPI)) & SPI_FLASH_USR);
 
 	readDataFromBuffer(data, numberByte);
+}
 
+
+void hspi_Tx(uint8_t * data, uint8_t numberByte, uint32_t numberRepeat)
+{
+	uint8_t dataBuffer[MAX_SIZE_BUFFER];
+
+	uint32_t i = 0;
+	uint8_t j = 0;
+	uint8_t k = 0;
+
+	uint32_t regvalue = 0;
+	uint16_t numberBit = 0;
+
+	while (READ_PERI_REG(SPI_FLASH_CMD(HSPI))&SPI_FLASH_USR);
+
+	regvalue |=  SPI_FLASH_DOUT;
+    regvalue &= ~(BIT2 | SPI_FLASH_USR_ADDR | SPI_FLASH_USR_DUMMY | SPI_FLASH_USR_DIN | SPI_USR_COMMAND | SPI_DOUTDIN); //clear bit 2 see example IoT_Demo
+	WRITE_PERI_REG(SPI_FLASH_USER(HSPI), regvalue);
+
+
+	if (numberByte > MAX_SIZE_BUFFER)
+	{
+		return;	// Need describe this case or exit :)
+	}
+/*
+	for (i = 0; i < numberRepeat; i ++)
+	{
+		for (j = 0; j < numberByte; j++)
+		{
+			dataBuffer[k] = data[j];
+			k++;
+		}
+		if (k >= (MAX_SIZE_BUFFER - MAX_SIZE_BUFFER % numberByte) || (i == (numberRepeat - 1)))
+		{
+			numberBit = k * 8 - 1;
+			WRITE_PERI_REG(SPI_FLASH_USER1(HSPI), (numberBit & SPI_USR_OUT_BITLEN) << SPI_USR_OUT_BITLEN_S );
+
+			writeDataToBuffer(dataBuffer, k);
+
+			SET_PERI_REG_MASK(SPI_FLASH_CMD(HSPI), SPI_FLASH_USR);   // send
+
+			while (READ_PERI_REG(SPI_FLASH_CMD(HSPI)) & SPI_FLASH_USR);
+
+			k = 0;
+		}
+	}
+*/
+
+	numberBit = numberByte * 8 - 1;
+
+	WRITE_PERI_REG(SPI_FLASH_USER1(HSPI), (numberBit & SPI_USR_OUT_BITLEN) << SPI_USR_OUT_BITLEN_S );
+
+	writeDataToBuffer(data, numberByte);
+
+	for (i = 0; i < numberRepeat; i ++)
+	{
+		SET_PERI_REG_MASK(SPI_FLASH_CMD(HSPI), SPI_FLASH_USR);   // send
+		while (READ_PERI_REG(SPI_FLASH_CMD(HSPI)) & SPI_FLASH_USR);
+	}
 }
