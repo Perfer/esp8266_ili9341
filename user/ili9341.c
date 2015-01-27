@@ -231,3 +231,42 @@ void tft_fillRectangle(uint16_t xLeft, uint16_t xRight, uint16_t yUp, uint16_t y
    	transmitData(data, 2, numRepeat);
 }
 
+void tft_setPixel(uint16_t poX, uint16_t poY, uint16_t color)
+{
+	uint8_t data[2] = {0};
+
+    setCol(poX, poX);
+    setPage(poY, poY);
+    transmitCmdData(0x2C, 0, 0);//  start to write to display RAM
+
+    data[0] = color >> 8;
+    data[1] = color & 0xff;
+   	transmitData(data, 2, 1);
+}
+
+void tft_drawLine( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color)
+{
+    int16_t dx = abs(x1 - x0);
+    int16_t dy = -abs(y1 - y0);
+    int8_t sx = (x0 < x1) ? 1 : -1;
+    int8_t sy = (y0 < y1) ? 1 : -1;
+    int16_t err = dx + dy;
+    int16_t e2 = 0;
+    for (;;)
+    {
+    	tft_setPixel(x0, y0, color);
+        e2 = 2*err;
+        if (e2 >= dy)
+        {
+            if (x0 == x1) break;
+            err += dy;
+            x0 += sx;
+        }
+        if (e2 <= dx)
+        {
+            if (y0 == y1) break;
+            err += dx;
+            y0 += sy;
+        }
+    }
+}

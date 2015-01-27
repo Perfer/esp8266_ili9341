@@ -16,18 +16,16 @@ LOCAL uint16_t color = 0xFFFF;
 
 LOCAL void ICACHE_FLASH_ATTR hello_cb(void *arg)
 {
-	uint32_t displayId = tft_readId();
+	tft_drawLine(nextX, 0, 240 - nextX, 320, color);
 	nextX += 24;
 	nextY += 32;
-	tft_fillRectangle(0, nextX, 0, nextY, color);
-
-	if ((nextX >= 240) && (nextY >= 320))
+	if ((nextX > 240) && (nextY > 320))
 	{
 		nextX = 0;
 		nextY = 0;
 		color = (color == 0) ? 0xFFFF : color << 4;
 	}
-	ets_uart_printf("Display ID: %d \r\n", displayId);
+	ets_uart_printf("Display ID: %d \r\n", tft_readId());
 }
 
 void user_init(void)

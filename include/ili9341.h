@@ -49,5 +49,7 @@ extern uint32_t tft_readId(void);
 extern void tft_init(void);
 extern void tft_configRegister(void);
 extern void tft_fillRectangle(uint16_t xLeft, uint16_t xRight, uint16_t yUp, uint16_t yDown, uint16_t color);
+extern void tft_setPixel(uint16_t poX, uint16_t poY, uint16_t color);
+extern void tft_drawLine( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color);
 
 #endif /* INCLUDE_ILI9341_H_ */
