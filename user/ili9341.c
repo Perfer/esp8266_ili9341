@@ -254,6 +254,7 @@ void tft_drawLine( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t 
     int16_t e2 = 0;
     for (;;)
     {
+//    	wdt_feed();
     	tft_setPixel(x0, y0, color);
         e2 = 2*err;
         if (e2 >= dy)

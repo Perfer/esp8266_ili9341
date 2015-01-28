@@ -7,8 +7,9 @@
 #include <gpio.h>
 #include "driver/uart.h"
 #include "ili9341.h"
+#include "cube.h"
 
 // Delay timer in milliseconds
-#define DELAY 1000
+#define DELAY 100
 
 #endif
