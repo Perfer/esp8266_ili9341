@@ -40,10 +40,10 @@ typedef union
 #define TFT_RST_DEACTIVE 	GPIO_OUTPUT_SET(0, 1)
 #define TFT_RST_INIT		PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO0_U, FUNC_GPIO0); TFT_RST_DEACTIVE
 
-#define MIN_Y				0
-#define MAX_Y				319
-#define MIN_X				0
-#define MAX_X				239
+#define MIN_TFT_Y				0
+#define MAX_TFT_Y				319
+#define MIN_TFT_X				0
+#define MAX_TFT_X				239
 
 extern uint32_t tft_readId(void);
 extern void tft_init(void);

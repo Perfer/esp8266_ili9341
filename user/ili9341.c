@@ -202,7 +202,7 @@ void tft_init(void)
 
 	tft_readId();
 	tft_configRegister();
-	tft_fillRectangle(MIN_X, MAX_X, MIN_Y, MAX_Y, 0);
+	tft_fillRectangle(MIN_TFT_X, MAX_TFT_X, MIN_TFT_Y, MAX_TFT_Y, 0);
 }
 
 void tft_fillRectangle(uint16_t xLeft, uint16_t xRight, uint16_t yUp, uint16_t yDown, uint16_t color)
@@ -214,10 +214,10 @@ void tft_fillRectangle(uint16_t xLeft, uint16_t xRight, uint16_t yUp, uint16_t y
     if (xLeft > xRight) swap(&xLeft, &xRight);
     if (yUp > yDown) swap(&yUp, &yDown);
 
-    constrain(&xLeft, MIN_X, MAX_X);
-    constrain(&xRight, MIN_X, MAX_X);
-    constrain(&yUp, MIN_Y, MAX_Y);
-    constrain(&yDown, MIN_Y, MAX_Y);
+    constrain(&xLeft, MIN_TFT_X, MAX_TFT_X);
+    constrain(&xRight, MIN_TFT_X, MAX_TFT_X);
+    constrain(&yUp, MIN_TFT_Y, MAX_TFT_Y);
+    constrain(&yDown, MIN_TFT_Y, MAX_TFT_Y);
 
     numRepeat = (xRight - xLeft + 1) * (yDown - yUp + 1);
 

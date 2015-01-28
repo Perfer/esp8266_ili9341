@@ -9,6 +9,18 @@ static const int16_t pix[AMOUNT_NODE][3] ={{-25,-25,-25},{25,-25,-25},{25,25,-25
 											{-25,-25,25}, {25,-25,25}, {25,25,25}, {-25,25,25}};
 static int16_t newpix[AMOUNT_NODE][3];
 
+
+static void calcPerspectiveProjection(const int16_t * coordinate, int16_t * x, int16_t * y)
+{
+	*x = coordinate[0] + coordinate[2] / 2;
+	*y = coordinate[1] - coordinate[2] / 2;
+}
+
+static void drawLine( int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t color)
+{
+	tft_drawLine(x0 + MAX_TFT_X/2, y0 + MAX_TFT_Y/2, x1 + MAX_TFT_X/2, y1 + MAX_TFT_Y/2, color);
+}
+
 void cube_calculate(double degreeX, double degreeY, double degreeZ, double scale, int16_t shiftX, int16_t shiftY, int16_t shiftZ)
 {
 
@@ -46,22 +58,7 @@ void cube_calculate(double degreeX, double degreeY, double degreeZ, double scale
     	newpix[i][0] += shiftX;     // Сдвиг по осям
     	newpix[i][1] += shiftY;
     	newpix[i][2] += shiftZ;
-
-    //	wdt_feed();
-
 	}
-}
-
-// Вычисление фрактальной геометрической проекции трехмерных точек на двумерную плоскость
-static void calculatePerspective(const int16_t * coordinate, int16_t * x, int16_t * y)
-{
-	*x = coordinate[0] + coordinate[2] / 2;
-	*y = coordinate[1] - coordinate[2] / 2;
-}
-
-static void draw( int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t color)
-{
-	tft_drawLine(x0 + 120, y0 + 160, x1 + 120, y1 + 160, color);
 }
 
 void cube_draw(uint16_t color)
@@ -69,20 +66,20 @@ void cube_draw(uint16_t color)
 	uint8_t i, j;
 	int16_t x0, y0, x1, y1;
 
-	for (j = 0; j < 8; j++)
+	for (j = 0; j < AMOUNT_NODE; j++)
 	{
 		i = j;
-		calculatePerspective(newpix[i], &x0, &y0);
-		if (i < 4)   // Рисует соединяющие ребра
+		calcPerspectiveProjection(newpix[i], &x0, &y0);
+		if (i < AMOUNT_NODE/2)   // Рисует соединяющие ребра
 		{
-			calculatePerspective(newpix[i+4], &x1, &y1);
-			draw(x0, y0, x1, y1, color);
+			calcPerspectiveProjection(newpix[i+4], &x1, &y1);
+			drawLine(x0, y0, x1, y1, color);
 		}
 		i ++;
-		i = (i == 4) ? 0 : i;   // Рисует переднюю грань
-		i = (i == 8) ? 4 : i;	// Рисует заднюю грань
+		i = (i == AMOUNT_NODE/2) ? 0 : i;   // Рисует переднюю грань
+		i = (i == AMOUNT_NODE) ? 4 : i;	// Рисует заднюю грань
 
-		calculatePerspective(newpix[i], &x1, &y1);
-		draw(x0, y0, x1, y1, color);
+		calcPerspectiveProjection(newpix[i], &x1, &y1);
+		drawLine(x0, y0, x1, y1, color);
 	}
 }

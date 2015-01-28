@@ -15,5 +15,6 @@
 #include "cordic.h"
 
 extern void cube_calculate(double degreeX, double degreeY, double degreeZ, double scale, int16_t shiftX, int16_t shiftY, int16_t shiftZ);
+extern void cube_draw(uint16_t color);
 
 #endif /* INCLUDE_CUBE_H_ */
