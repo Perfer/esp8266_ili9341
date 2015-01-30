@@ -13,7 +13,7 @@ static int cordic_ctab [CORDIC_NTAB] = { 0x3243F6A8, 0x1DAC6705, 0x0FADBAFC, 0x0
 0x000003FF, 0x000001FF, 0x000000FF, 0x0000007F, 0x0000003F, 0x0000001F, 0x0000000F,
 0x00000008, 0x00000004, 0x00000002, 0x00000001, 0x00000000};
 
-#define SIN_COS_FROM_MATH_H
+//#define SIN_COS_FROM_MATH_H
 
 #ifdef SIN_COS_FROM_MATH_H
 #include <math.h>
@@ -37,7 +37,7 @@ void cordic(double degree, double *s, double *c)
 	if (degree < -90.0) degree += 180.0;
 	if (degree > 90.0) degree -= 180.0;
 
-	z =degree * M_PI / 180.0 * MUL;
+	z = degree * M_PI / 180.0 * MUL;
 
 	for (k=0; k < CORDIC_NTAB; ++k)
 	{

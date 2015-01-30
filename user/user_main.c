@@ -28,7 +28,7 @@ LOCAL void ICACHE_FLASH_ATTR hello_cb(void *arg)
 	degree += 2.0;
 	scale += scale_inc;
 	cube_draw(0xFFFF);
-	ets_uart_printf("degree: %d \r\n", (int)degree);
+	ets_uart_printf("Degree: %d \r\n", (int)degree);
 }
 
 void user_init(void)
@@ -42,5 +42,5 @@ void user_init(void)
 	os_timer_disarm(&hello_timer);
 	os_timer_setfn(&hello_timer, (os_timer_func_t *)hello_cb, (void *)0);
 	os_timer_arm(&hello_timer, DELAY, 1);
-	ets_uart_printf("System init done.\r\n");
+	ets_uart_printf("System init done \r\n");
 }

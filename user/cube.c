@@ -35,27 +35,27 @@ void cube_calculate(double degreeX, double degreeY, double degreeZ, double scale
 	for (i = 0; i < AMOUNT_NODE; i++)
 	{
 
-	    x = pix[i][0];   //Исходное направление
+	    x = pix[i][0];   // Base coordinate
 	    y = pix[i][1];
 	    z = pix[i][2];
 
-	    x1 = x*cosz + y*sinz;       // вокруг Z
+	    x1 = x*cosz + y*sinz;       // Rotation around axis Z
 	    y1 = -x*sinz + y*cosz;
 	    z1 = z;
 
-	    x = x1;                     // вокруг X
+	    x = x1;                     // Rotation around axis X
 	    y = y1*cosx + z1*sinx;
 	    z = -y1*sinx + z1*cosx;
 
-	    x1 = x*cosy - z*siny;       // вокруг Y
+	    x1 = x*cosy - z*siny;       // Rotation around axis Y
 	    y1 = y;
 	    z1 = x*siny + z*cosy;
 
-    	newpix[i][0] = (int16_t)round(x1 * scale);    // Масштабирование
+    	newpix[i][0] = (int16_t)round(x1 * scale);    // Scaling
     	newpix[i][1] = (int16_t)round(y1 * scale);
     	newpix[i][2] = (int16_t)round(z1 * scale);
 
-    	newpix[i][0] += shiftX;     // Сдвиг по осям
+    	newpix[i][0] += shiftX;     // Shift center coordinates
     	newpix[i][1] += shiftY;
     	newpix[i][2] += shiftZ;
 	}
@@ -70,14 +70,14 @@ void cube_draw(uint16_t color)
 	{
 		i = j;
 		calcPerspectiveProjection(newpix[i], &x0, &y0);
-		if (i < AMOUNT_NODE/2)   // Рисует соединяющие ребра
+		if (i < AMOUNT_NODE/2)   // Draw sealing ribs
 		{
 			calcPerspectiveProjection(newpix[i+4], &x1, &y1);
 			drawLine(x0, y0, x1, y1, color);
 		}
 		i ++;
-		i = (i == AMOUNT_NODE/2) ? 0 : i;   // Рисует переднюю грань
-		i = (i == AMOUNT_NODE) ? 4 : i;	// Рисует заднюю грань
+		i = (i == AMOUNT_NODE/2) ? 0 : i;   // Draws front face
+		i = (i == AMOUNT_NODE) ? 4 : i;	// Draws back face
 
 		calcPerspectiveProjection(newpix[i], &x1, &y1);
 		drawLine(x0, y0, x1, y1, color);
