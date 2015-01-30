@@ -1,6 +1,13 @@
 /*
-	The hello world demo with blink led
-*/
+ *  Example of working ESP8266 and 2.2 Inch SPI TFT LCD Serial Port Module Display ILI9341
+ *  Specification on ILI9341 - http://www.newhavendisplay.com/app_notes/ILI9341.pdf
+ *  Specification on ESP8266 - http://www.esp8266.com/
+ *
+ *  Original source https://github.com/Perfer/esp8266_ili9341
+ *
+ *  Author: Semen Sachkov
+ *
+ */
 
 #include "user_config.h"
 
@@ -27,13 +34,13 @@ LOCAL void ICACHE_FLASH_ATTR hello_cb(void *arg)
 void user_init(void)
 {
 	// Configure the UART
-	uart_init(BIT_RATE_9600,BIT_RATE_9600);
+	uart_init(BIT_RATE_115200,BIT_RATE_115200);
+	ets_uart_printf("\r\nSystem init...\r\n");
+	// Initialize TFT
+	tft_init();
 	// Set up a timer to send the message
 	os_timer_disarm(&hello_timer);
 	os_timer_setfn(&hello_timer, (os_timer_func_t *)hello_cb, (void *)0);
 	os_timer_arm(&hello_timer, DELAY, 1);
-	// Initialize TFT
-	tft_init();
+	ets_uart_printf("System init done.\r\n");
 }
-
-
