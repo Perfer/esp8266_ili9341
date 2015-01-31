@@ -271,3 +271,22 @@ void tft_drawLine( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t 
         }
     }
 }
+
+void tft_drawChar(int16_t ascii, uint16_t posX, uint16_t posY, uint16_t size, uint16_t color)
+{
+	uint8_t i = 0;
+	uint8_t j = 0;
+
+	ascii = ( (ascii < 32) || (ascii > 127) ) ? 0x20 : ascii - 0x20;
+
+
+    for (i = 0; i < FONT_X; ++i )
+    {
+    	for(j = 0; j < FONT_Y; ++j)
+    	{
+    			uint16_t finalColor = ((simpleFont[ascii][i] >> j) & 0x01) ? color : 0;
+
+    			tft_fillRectangle(posX + i * size, posX + (i+1) * size,  posY + j * size, posY + (j+1) * size, finalColor);
+    	}
+    }
+}
