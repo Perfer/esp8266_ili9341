@@ -5,11 +5,15 @@
 #include <osapi.h>
 #include <os_type.h>
 #include <gpio.h>
+#include <mem.h>
+#include <user_interface.h>
 #include "driver/uart.h"
 #include "ili9341.h"
 #include "cube.h"
 
-// Delay timer in milliseconds
-#define DELAY 100
+
+#define DELAY_TIMER 100// Delay timer in milliseconds
+#define TEST_QUEUE_LEN 4
+#define RUN_TEST 1
 
 #endif

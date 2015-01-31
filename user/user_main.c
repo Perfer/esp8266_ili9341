@@ -13,12 +13,13 @@
 
 extern int ets_uart_printf(const char *fmt, ...);
 
-LOCAL os_timer_t hello_timer;
+LOCAL os_timer_t timerHandler;
+
 LOCAL double degree = -180.0;
 LOCAL double scale = 1.0;
 LOCAL double scale_inc = 0.025;
 
-LOCAL void ICACHE_FLASH_ATTR hello_cb(void *arg)
+static void test(void)
 {
 	cube_draw(0);
 	if (degree >= 180.0) degree = -180.0;
@@ -31,16 +32,38 @@ LOCAL void ICACHE_FLASH_ATTR hello_cb(void *arg)
 	ets_uart_printf("Degree: %d \r\n", (int)degree);
 }
 
+LOCAL void ICACHE_FLASH_ATTR sendMsgToHandler(void *arg)
+{
+	system_os_post(USER_TASK_PRIO_0, RUN_TEST, 'a');
+}
+
+void handler_task (os_event_t *e)
+{
+	switch (e->sig)
+	{
+		case RUN_TEST: test(); break;
+		default: break;
+	}
+}
+
 void user_init(void)
 {
+	os_event_t *handlerQueue;
 	// Configure the UART
 	uart_init(BIT_RATE_115200,BIT_RATE_115200);
 	ets_uart_printf("\r\nSystem init...\r\n");
+
 	// Initialize TFT
 	tft_init();
-	// Set up a timer to send the message
-	os_timer_disarm(&hello_timer);
-	os_timer_setfn(&hello_timer, (os_timer_func_t *)hello_cb, (void *)0);
-	os_timer_arm(&hello_timer, DELAY, 1);
+
+	// Set up a timer to send the message to handler
+	os_timer_disarm(&timerHandler);
+	os_timer_setfn(&timerHandler, (os_timer_func_t *)sendMsgToHandler, (void *)0);
+	os_timer_arm(&timerHandler, DELAY_TIMER, 1);
+
+	// Set up a timerHandler to send the message to handler
+	handlerQueue = (os_event_t *)os_malloc(sizeof(os_event_t)*TEST_QUEUE_LEN);
+	system_os_task(handler_task, USER_TASK_PRIO_0, handlerQueue, TEST_QUEUE_LEN);
+
 	ets_uart_printf("System init done \r\n");
 }
