@@ -53,5 +53,6 @@ extern void tft_fillRectangle(uint16_t xLeft, uint16_t xRight, uint16_t yUp, uin
 extern void tft_setPixel(uint16_t poX, uint16_t poY, uint16_t color);
 extern void tft_drawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color);
 extern void tft_drawChar(int16_t ascii, uint16_t posX, uint16_t posY, uint16_t size, uint16_t color);
+extern void tft_drawStreamString(char * str);
 
 #endif /* INCLUDE_ILI9341_H_ */

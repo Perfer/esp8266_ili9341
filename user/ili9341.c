@@ -290,3 +290,43 @@ void tft_drawChar(int16_t ascii, uint16_t posX, uint16_t posY, uint16_t size, ui
     	}
     }
 }
+
+#define STREAM_STRING_SIZE_FONT		2
+#define STREAM_STRING_COLOR_FONT	0xFFFF
+
+static void nextString(uint16_t *x, uint16_t *y)
+{
+    *x = 0;
+    *y += FONT_Y * STREAM_STRING_SIZE_FONT;
+
+    if( (*y + FONT_Y * STREAM_STRING_SIZE_FONT) > (MAX_TFT_Y + 1) )
+    {
+    	*x = 0;
+    	*y = 0;
+    }
+
+    tft_fillRectangle(0, MAX_TFT_X, *y, *y + FONT_Y * STREAM_STRING_SIZE_FONT, 0x0000);
+}
+
+void tft_drawStreamString(char * str)
+{
+	static uint16_t posX = 0;
+	static uint16_t posY = 0;
+    while(*str)
+    {
+        tft_drawChar(*str, posX, posY, STREAM_STRING_SIZE_FONT, STREAM_STRING_COLOR_FONT);
+        str++;
+
+        posX += FONT_X * STREAM_STRING_SIZE_FONT; // Move cursor right
+
+        if ( (posX + FONT_X * STREAM_STRING_SIZE_FONT) > (MAX_TFT_X + 1) )
+        	nextString(&posX, &posY);
+
+        if (*str == 0x0A)
+        {
+        	str++;
+        	nextString(&posX, &posY);
+        }
+    }
+}
+

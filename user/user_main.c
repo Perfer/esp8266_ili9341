@@ -17,24 +17,9 @@ LOCAL os_timer_t timerHandler;
 
 static void test(void)
 {
-	uint16_t i = 0;
-	uint8_t nextASCII(void)
-	{
-		static int16_t ascii = 32;
-		ascii = (ascii > 127) ? 32 : ascii + 1;
-		return ascii;
-	}
-	uint8_t nextX0(void)
-	{
-		static uint8_t x0 = 0;
-		x0 = (x0 > 239) ? 0 : x0 + 16;
-		return x0;
-	}
-	tft_drawChar(nextASCII(), nextX0(), i, 2, 0xFFFF);
-	tft_drawChar(nextASCII(), nextX0(), i, 2, 0xFFFF);
-	tft_drawChar(nextASCII(), nextX0(), i, 2, 0xFFFF);
-	tft_drawChar(nextASCII(), nextX0(), i, 2, 0xFFFF);
-	tft_drawChar(nextASCII(), nextX0(), i, 2, 0xFFFF);
+	tft_drawStreamString("T(room): 27.0\n");
+	tft_drawStreamString("T(75km): -24.7\n");
+	tft_drawStreamString("Time: 12:42:32\n");
 }
 
 LOCAL void ICACHE_FLASH_ATTR sendMsgToHandler(void *arg)
