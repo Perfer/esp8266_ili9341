@@ -65,7 +65,7 @@ static void setCol(uint16_t start, uint16_t end)
 	else
 	{
 		uint8_t data[4] = {start >> 8, start & 0xFF, end >> 8, end & 0xFF};
-		transmitCmdData(0x2A, (uint8_t *)data, 4);	//Column Command address
+		transmitCmdData(0x2A, data, 4);	//Column Command address
 		startLast = start;
 		endLast = end;
 	}
@@ -82,7 +82,7 @@ static void setPage(uint16_t start, uint16_t end)
 	else
 	{
 		uint8_t data[4] = {start >> 8, start & 0xFF, end >> 8, end & 0xFF};
-		transmitCmdData(0x2B, (uint8_t *)data, 4);	//Column Command address
+		transmitCmdData(0x2B, data, 4);	//Column Command address
 		startLast = start;
 		endLast = end;
 	}
@@ -255,16 +255,10 @@ void tft_fillRectangle(uint16_t xLeft, uint16_t xRight, uint16_t yUp, uint16_t y
 
 void tft_setPixel(uint16_t poX, uint16_t poY, uint16_t color)
 {
-	uint8_t data[2] = {0};
-
-    setCol(poX, poX);
-    setPage(poY, poY);
-    transmitCmdData(0x2C, 0, 0);//  start to write to display RAM
-
-    data[0] = color >> 8;
-    data[1] = color & 0xff;
-   	transmitData(data, 2, 1);
+	tft_fillRectangle(poX, poX, poY, poY, color);
 }
+
+//#define USE_OPTIMIZATION_DRAWLINE
 
 void tft_drawLine( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color)
 {
@@ -274,9 +268,24 @@ void tft_drawLine( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t 
     int8_t sy = (y0 < y1) ? 1 : -1;
     int16_t err = dx + dy;
     int16_t e2 = 0;
+
+	uint16_t startX = x0;
+	uint16_t startY = y0;
+
     for (;;)
     {
-    	tft_setPixel(x0, y0, color);
+		#ifdef USE_OPTIMIZATION_DRAWLINE
+    		// Need correction
+			if ((startX != x0) && (startY != y0)) // draw line and not draw point
+			{
+				tft_fillRectangle(startX, x0, startY, y0, color);
+				startX = x0;
+				startY = y0;
+			}
+		#else
+			tft_setPixel(x0, y0, color);
+		#endif
+
         e2 = 2*err;
         if (e2 >= dy)
         {
@@ -291,4 +300,7 @@ void tft_drawLine( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t 
             y0 += sy;
         }
     }
+#ifdef USE_OPTIMIZATION_DRAWLINE
+	tft_fillRectangle(startX, x0, startY, y0, color);
+#endif
 }

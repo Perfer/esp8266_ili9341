@@ -16,9 +16,9 @@
 
 #define SPI         0
 #define HSPI        1
-#define MAX_SIZE_BUFFER	32
+#define MAX_SIZE_BUFFER	64
 
-#undef USE_HARD_OPTIMIZATION
+//#define USE_HARD_OPTIMIZATION
 
 extern void hspi_init(void);
 extern void hspi_TxRx( uint8_t * data, uint8_t numberByte);

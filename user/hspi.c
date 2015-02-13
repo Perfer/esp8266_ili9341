@@ -134,7 +134,7 @@ void hspi_Tx(uint8_t * data, uint8_t numberByte, uint32_t numberRepeat)
 		}
 	}
 
-#endif
+#else
 
 	numberBit = numberByte * 8 - 1;
 
@@ -147,4 +147,6 @@ void hspi_Tx(uint8_t * data, uint8_t numberByte, uint32_t numberRepeat)
 		SET_PERI_REG_MASK(SPI_FLASH_CMD(HSPI), SPI_FLASH_USR);   // send
 		while (READ_PERI_REG(SPI_FLASH_CMD(HSPI)) & SPI_FLASH_USR);
 	}
+
+#endif
 }
