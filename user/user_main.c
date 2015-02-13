@@ -26,7 +26,7 @@ static void test(void)
 	if ((scale < 0.5) && (scale_inc < 0)) scale_inc = -scale_inc;
 	if ((scale > 1.5) && (scale_inc > 0)) scale_inc = -scale_inc;
 	cube_calculate(degree, degree, degree, scale, 0, 0, 0);
-	degree += 2.0;
+	degree += 0.5;
 	scale += scale_inc;
 	cube_draw(0xFFFF);
 	ets_uart_printf("Degree: %d \r\n", (int)degree);

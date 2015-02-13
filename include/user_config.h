@@ -12,7 +12,7 @@
 #include "cube.h"
 
 
-#define DELAY_TIMER 100// Delay timer in milliseconds
+#define DELAY_TIMER 10// Delay timer in milliseconds
 #define TEST_QUEUE_LEN 4
 #define RUN_TEST 1
 

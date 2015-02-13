@@ -56,14 +56,36 @@ static void constrain(uint16_t *value, uint16_t min, uint16_t max)
 
 static void setCol(uint16_t start, uint16_t end)
 {
-	uint8_t data[4] = {start >> 8, start & 0xFF, end >> 8, end & 0xFF};
-	transmitCmdData(0x2A, (uint8_t *)data, 4);	//Column Command address
+	static uint16_t startLast = 0;
+	static uint16_t endLast = 0;
+	if ((startLast == start) && (endLast == end))
+	{
+		return;
+	}
+	else
+	{
+		uint8_t data[4] = {start >> 8, start & 0xFF, end >> 8, end & 0xFF};
+		transmitCmdData(0x2A, (uint8_t *)data, 4);	//Column Command address
+		startLast = start;
+		endLast = end;
+	}
 }
 
 static void setPage(uint16_t start, uint16_t end)
 {
-	uint8_t data[4] = {start >> 8, start & 0xFF, end >> 8, end & 0xFF};
-	transmitCmdData(0x2B, (uint8_t *)data, 4);	//Column Command address
+	static uint16_t startLast = 0;
+	static uint16_t endLast = 0;
+	if ((startLast == start) && (endLast == end))
+	{
+		return;
+	}
+	else
+	{
+		uint8_t data[4] = {start >> 8, start & 0xFF, end >> 8, end & 0xFF};
+		transmitCmdData(0x2B, (uint8_t *)data, 4);	//Column Command address
+		startLast = start;
+		endLast = end;
+	}
 }
 
 uint32_t tft_readId(void)
@@ -254,7 +276,6 @@ void tft_drawLine( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t 
     int16_t e2 = 0;
     for (;;)
     {
-//    	wdt_feed();
     	tft_setPixel(x0, y0, color);
         e2 = 2*err;
         if (e2 >= dy)
