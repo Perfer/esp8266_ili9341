@@ -17,9 +17,12 @@ LOCAL os_timer_t timerHandler;
 
 static void test(void)
 {
-	tft_drawStreamString("T(room): 27.0\n");
-	tft_drawStreamString("T(75km): -24.7\n");
-	tft_drawStreamString("Time: 12:42:32\n");
+//	tft_drawStreamString("Troom = 27.0\n",  1);
+//	tft_drawStreamString("T(75km): -24.7\n", 2);
+	tft_drawString("12:42:32\n18:12:54", 0, 0, 2, 0xFFFF, 0x0000);
+
+	tft_drawString("12:42:34", 0, 40, 2, 0xFFFF, 0x0000);
+	tft_drawString("00:01:18", 0, 60, 2, 0xFFFF, 0x0000);
 }
 
 LOCAL void ICACHE_FLASH_ATTR sendMsgToHandler(void *arg)

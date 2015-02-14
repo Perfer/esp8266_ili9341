@@ -56,14 +56,36 @@ static void constrain(uint16_t *value, uint16_t min, uint16_t max)
 
 static void setCol(uint16_t start, uint16_t end)
 {
-	uint8_t data[4] = {start >> 8, start & 0xFF, end >> 8, end & 0xFF};
-	transmitCmdData(0x2A, (uint8_t *)data, 4);	//Column Command address
+	static uint16_t startLast = 0;
+	static uint16_t endLast = 0;
+	if ((startLast == start) && (endLast == end))
+	{
+		return;
+	}
+	else
+	{
+		uint8_t data[4] = {start >> 8, start & 0xFF, end >> 8, end & 0xFF};
+		transmitCmdData(0x2A, data, 4);	//Column Command address
+		startLast = start;
+		endLast = end;
+	}
 }
 
 static void setPage(uint16_t start, uint16_t end)
 {
-	uint8_t data[4] = {start >> 8, start & 0xFF, end >> 8, end & 0xFF};
-	transmitCmdData(0x2B, (uint8_t *)data, 4);	//Column Command address
+	static uint16_t startLast = 0;
+	static uint16_t endLast = 0;
+	if ((startLast == start) && (endLast == end))
+	{
+		return;
+	}
+	else
+	{
+		uint8_t data[4] = {start >> 8, start & 0xFF, end >> 8, end & 0xFF};
+		transmitCmdData(0x2B, data, 4);	//Column Command address
+		startLast = start;
+		endLast = end;
+	}
 }
 
 uint32_t tft_readId(void)
@@ -272,7 +294,7 @@ void tft_drawLine( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t 
     }
 }
 
-void tft_drawChar(int16_t ascii, uint16_t posX, uint16_t posY, uint16_t size, uint16_t color)
+void tft_drawChar(int16_t ascii, uint16_t posX, uint16_t posY, uint8_t sizeFont, uint16_t colorFont, uint16 colorBackGround)
 {
 	uint8_t i = 0;
 	uint8_t j = 0;
@@ -284,48 +306,47 @@ void tft_drawChar(int16_t ascii, uint16_t posX, uint16_t posY, uint16_t size, ui
     {
     	for(j = 0; j < FONT_Y; ++j)
     	{
-    			uint16_t finalColor = ((simpleFont[ascii][i] >> j) & 0x01) ? color : 0;
+    			uint16_t finalColor = ((simpleFont[ascii][i] >> j) & 0x01) ? colorFont : colorBackGround;
 
-    			tft_fillRectangle(posX + i * size, posX + (i+1) * size,  posY + j * size, posY + (j+1) * size, finalColor);
+    			tft_fillRectangle(posX + i * sizeFont, posX + (i+1) * sizeFont,  posY + j * sizeFont, posY + (j+1) * sizeFont, finalColor);
     	}
     }
 }
 
-#define STREAM_STRING_SIZE_FONT		2
-#define STREAM_STRING_COLOR_FONT	0xFFFF
 
-static void nextString(uint16_t *x, uint16_t *y)
+void tft_drawString(char *str, uint16_t posX, uint16_t posY, uint8_t sizeFont, uint16_t colorFont, uint16 colorBackGround)
 {
-    *x = 0;
-    *y += FONT_Y * STREAM_STRING_SIZE_FONT;
 
-    if( (*y + FONT_Y * STREAM_STRING_SIZE_FONT) > (MAX_TFT_Y + 1) )
-    {
-    	*x = 0;
-    	*y = 0;
-    }
+	void nextString(void)
+	{
 
-    tft_fillRectangle(0, MAX_TFT_X, *y, *y + FONT_Y * STREAM_STRING_SIZE_FONT, 0x0000);
-}
+	    tft_fillRectangle(posX, MAX_TFT_X, posY, posY + FONT_Y * sizeFont - 1, colorBackGround);
 
-void tft_drawStreamString(char * str)
-{
-	static uint16_t posX = 0;
-	static uint16_t posY = 0;
+	    posX = 0;
+	    posY += FONT_Y * sizeFont + 1;
+
+	    if( (posY + FONT_Y * sizeFont) > (MAX_TFT_Y + 1) )
+	    {
+	    	posX = 0;
+	    	posY = 0;
+	    }
+
+	    //tft_fillRectangle(posX, MAX_TFT_X, posY, posY + FONT_Y * sizeFont - 1, colorBackGround);
+	}
     while(*str)
     {
-        tft_drawChar(*str, posX, posY, STREAM_STRING_SIZE_FONT, STREAM_STRING_COLOR_FONT);
+        tft_drawChar(*str, posX, posY, sizeFont, colorFont, colorBackGround);
         str++;
 
-        posX += FONT_X * STREAM_STRING_SIZE_FONT; // Move cursor right
+        posX += FONT_X * sizeFont; // Move cursor right
 
-        if ( (posX + FONT_X * STREAM_STRING_SIZE_FONT) > (MAX_TFT_X + 1) )
-        	nextString(&posX, &posY);
+        if ( (posX + FONT_X * sizeFont) > (MAX_TFT_X + 1) )
+        	nextString();
 
         if (*str == 0x0A)
         {
         	str++;
-        	nextString(&posX, &posY);
+        	nextString();
         }
     }
 }
