@@ -15,10 +15,24 @@ extern int ets_uart_printf(const char *fmt, ...);
 
 LOCAL os_timer_t timerHandler;
 
+LOCAL double degree = -180.0;
+LOCAL double scale = 1.0;
+LOCAL double scale_inc = 0.025;
+
+
 static void test(void)
 {
-//	tft_drawStreamString("Troom = 27.0\n",  1);
-//	tft_drawStreamString("T(75km): -24.7\n", 2);
+
+	cube_draw(0);
+	if (degree >= 180.0) degree = -180.0;
+	if ((scale < 0.5) && (scale_inc < 0)) scale_inc = -scale_inc;
+	if ((scale > 1.5) && (scale_inc > 0)) scale_inc = -scale_inc;
+	cube_calculate(degree, degree, degree, scale, 0, 0, 0);
+	degree += 0.5;
+	scale += scale_inc;
+	cube_draw(0xFFFF);
+	ets_uart_printf("Degree: %d \r\n", (int)degree);
+
 	tft_drawString("12:42:32\n18:12:54", 0, 0, 2, 0xFFFF, 0x0000);
 
 	tft_drawString("12:42:34", 0, 40, 2, 0xFFFF, 0x0000);

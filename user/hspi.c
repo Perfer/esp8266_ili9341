@@ -26,21 +26,14 @@ void hspi_init(void)
 	   ((3 & SPI_CLKCNT_L) << SPI_CLKCNT_L_S));
 }
 
-static void writeDataToBuffer(uint8_t * data, uint8_t numberByte)
+static void writeDataToBuffer(uint8_t *data, uint8_t numberByte)
 {
 	uint8_t i = 0;
-	uint8_t shift = 0;
-	uint32_t *buffer = (uint32_t *)SPI_FLASH_C0(HSPI);
-	for (i = 0; i < numberByte; ++i)
+	uint8_t amount4byte = (numberByte / 4) + 1;
+
+	for (i = 0; i < amount4byte; ++i)
 	{
-		if (shift >= 32)
-		{
-			shift = 0;
-			buffer += 1;
-		}
-		*buffer &= ~( 0xFFUL << shift );
-		*buffer |= ((uint32_t)data[i]) << shift;
-		shift += 8;
+	    ((uint32_t *)SPI_FLASH_C0(HSPI)) [i]= ((uint32_t *)data) [i];
 	}
 }
 
@@ -92,11 +85,15 @@ void hspi_TxRx(uint8_t * data, uint8_t numberByte)
 
 void hspi_Tx(uint8_t * data, uint8_t numberByte, uint32_t numberRepeat)
 {
-	uint8_t dataBuffer[MAX_SIZE_BUFFER];
+#ifdef USE_HARD_OPTIMIZATION
 
-	uint32_t i = 0;
+	uint8_t dataBuffer[MAX_SIZE_BUFFER];
 	uint8_t j = 0;
 	uint8_t k = 0;
+
+#endif
+	uint32_t i = 0;
+
 
 	uint32_t regvalue = 0;
 	uint16_t numberBit = 0;
@@ -112,7 +109,9 @@ void hspi_Tx(uint8_t * data, uint8_t numberByte, uint32_t numberRepeat)
 	{
 		return;	// Need describe this case or exit :)
 	}
-/*
+
+#ifdef USE_HARD_OPTIMIZATION
+
 	for (i = 0; i < numberRepeat; i ++)
 	{
 		for (j = 0; j < numberByte; j++)
@@ -134,7 +133,8 @@ void hspi_Tx(uint8_t * data, uint8_t numberByte, uint32_t numberRepeat)
 			k = 0;
 		}
 	}
-*/
+
+#else
 
 	numberBit = numberByte * 8 - 1;
 
@@ -147,4 +147,6 @@ void hspi_Tx(uint8_t * data, uint8_t numberByte, uint32_t numberRepeat)
 		SET_PERI_REG_MASK(SPI_FLASH_CMD(HSPI), SPI_FLASH_USR);   // send
 		while (READ_PERI_REG(SPI_FLASH_CMD(HSPI)) & SPI_FLASH_USR);
 	}
+
+#endif
 }
